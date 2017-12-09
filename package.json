@@ -1,0 +1,14 @@
+{
+  "name": "git-parent-branch",
+  "version": "1.0.0",
+  "description": "nodejs utility to find parent branch of current one",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Katerina Pavlenko <cakeinpanic@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "simple-git": "^1.85.0"
+  }
+}
