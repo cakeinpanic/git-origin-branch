@@ -16,44 +16,50 @@ function revParse(branchName) {
 
 function getAllBranchesList() {
     return new Promise((resolve) => {
-        exec('git show-branch -a --topo-order | grep \'\\*\' ',
+        exec('git show-branch --topo-order | grep \'\\*\' ',
             (error, output) => {
-                resolve(output)
+                resolve(getAllMatches(output))
             });
     })
 }
 
-function getAllMatches(str, regex) {
-    let matches = [];
-    let m;
-    while (m = regex.exec(str)) {
-        matches.push(m[1]);
-    }
-    return matches;
+function getAllPushedBranchesList() {
+    return new Promise((resolve) => {
+        exec('git show-branch -r ',
+            (error, output) => {
+                resolve(getAllMatches(output))
+            });
+    })
+}
+
+function getAllMatches(str) {
+    let regex = /\[(.+)\]/;
+
+    return str.split('\n')
+              .map((line) => line.replace(/^.+\[/, '['))
+              .map((line) => regex.exec(line) && regex.exec(line)[1])
+              .filter(a => !!a)
+              .map(branchName => branchName.replace(/([\^~](\d*))+/, ''))
+              .map(branchName => branchName.replace('origin/', ''));
 }
 
 function getOriginBranch() {
-    return getAllBranchesList()
-        .then(output => {
-            let allBranches = getAllMatches(output, /\[(.+)\]/g).splice(1);
-            return Promise
-                .all(
-                    allBranches
-                        .reverse()
-                        .map((branchName) => revParse(branchName))
-                )
+    return Promise.all([getAllBranchesList(), getAllPushedBranchesList()])
+                  .then(([allBranches, allPushedBranches]) => {
+                      allBranches = allBranches
+                          .filter(branchName => allPushedBranches.indexOf(branchName) > -1)
+                          .filter((el, i, arr) => arr[i + 1] !== el);
 
-
-        })
-        .then(data => {
-            return data.find((branch) => branch.status).branchName;
-        })
-        .then(branchName => {
-            if (!branchName) {
-                throw Error('no origin at all, have never been pushed');
-            }
-            return `origin/${branchName.trim()}`
-        })
+                      return Promise
+                          .all(allBranches.map((branchName) => revParse(branchName)))
+                  })
+                  .then(data => data.find((branch) => branch.status).branchName)
+                  .then(branchName => {
+                      if (!branchName) {
+                          throw Error('no origin at all, have never been pushed');
+                      }
+                      return `origin/${branchName.trim()}`
+                  })
 }
 
 
