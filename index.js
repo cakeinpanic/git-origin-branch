@@ -1,42 +1,62 @@
 'use strict';
 const {exec} = require('child_process');
-const git = require('simple-git/promise')(process.cwd()).silent(true);
 
-// snippet found here https://gist.github.com/joechrysler/6073741
-function getOriginBranch(currentBranchName) {
-    return git.revparse(['--abbrev-ref', 'HEAD'])
-              .then((branchName) => {
-                  branchName = currentBranchName || branchName;
-                  console.log(branchName)
+function revParse(branchName) {
+    return new Promise((resolve) => {
+        exec(`git rev-parse origin/${branchName}`,
+            (error) => {
+                if (error) {
+                    resolve({branchName, status: false});
+                    return;
+                }
+                resolve({branchName, status: true});
+            });
+    });
+}
 
-                  return git.revparse([`origin/${branchName.trim()}`])
-                            .then(() => branchName)
-              })
-              .catch(() => {
-                  console.log('catch')
-                  let b = currentBranchName || "git rev-parse --abbrev-ref HEAD"
-                  // https://gist.github.com/joechrysler/6073741
-                  return new Promise((resolve) => {
-                      exec("git show-branch -a \\\n" +
-                          "| grep '\\*' \\\n" +
-                          "| grep -v `" + b + "` \\\n" +
-                          "| head -n1 \\\n" +
-                          "| sed 's/.*\\[\\(.*\\)\\].*/\\1/' \\\n" +
-                          "| sed 's/[\\^~].*//'",
-                          (error, branchName) => {
-                              resolve(branchName);
-                          });
-                  })
-              })
-              .then(branchName => {
-                  if (!branchName) {
-                      throw Error('no origin at all, have never been pushed');
-                  }
-                  return `origin/${branchName.trim()}`
-              })
+function getAllBranchesList() {
+    return new Promise((resolve) => {
+        exec('git show-branch -a --topo-order | grep \'\\*\' ',
+            (error, output) => {
+                resolve(output)
+            });
+    })
+}
+
+function getAllMatches(str, regex) {
+    let matches = [];
+    let m;
+    while (m = regex.exec(str)) {
+        matches.push(m[1]);
+    }
+    return matches;
+}
+
+function getOriginBranch() {
+    return getAllBranchesList()
+        .then(output => {
+            let allBranches = getAllMatches(output, /\[(.+)\]/g).splice(1);
+            return Promise
+                .all(
+                    allBranches
+                        .reverse()
+                        .map((branchName) => revParse(branchName))
+                )
+
+
+        })
+        .then(data => {
+            return data.find((branch) => branch.status).branchName;
+        })
+        .then(branchName => {
+            if (!branchName) {
+                throw Error('no origin at all, have never been pushed');
+            }
+            return `origin/${branchName.trim()}`
+        })
 }
 
 
 module.exports = getOriginBranch;
 
-getOriginBranch().then((data)=>console.log(data))
+getOriginBranch().then((data) => console.log(data))
