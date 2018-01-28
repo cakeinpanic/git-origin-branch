@@ -4,11 +4,15 @@
   "description": "nodejs utility to find parent branch of current one",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Katerina Pavlenko <cakeinpanic@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "simple-git": "^1.85.0"
+    "simple-git": "^1.89.0"
+  },
+  "devDependencies": {
+    "jest": "^22.1.4",
+    "ts-jest": "^22.0.1"
   }
 }

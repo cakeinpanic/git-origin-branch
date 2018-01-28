@@ -64,5 +64,3 @@ function getOriginBranch() {
 
 
 module.exports = getOriginBranch;
-
-getOriginBranch().then((data) => console.log(data))
