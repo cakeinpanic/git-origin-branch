@@ -16,7 +16,7 @@ function revParse(branchName) {
 
 function getAllBranchesList() {
     return new Promise((resolve) => {
-        exec('git show-branch --topo-order | grep \'\\*\' ',
+        exec('git show-branch --topo-order',
             (error, output) => {
                 resolve(getAllMatches(output))
             });
@@ -53,7 +53,10 @@ function getOriginBranch() {
                       return Promise
                           .all(allBranches.map((branchName) => revParse(branchName)))
                   })
-                  .then(data => data.find((branch) => branch.status).branchName)
+                  .then(data => {
+                      console.log(data);
+                      return data.find((branch) => branch.status).branchName
+                  })
                   .then(branchName => {
                       if (!branchName) {
                           throw Error('no origin at all, have never been pushed');
