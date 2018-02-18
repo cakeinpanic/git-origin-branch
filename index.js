@@ -40,7 +40,8 @@ function getAllMatches(str) {
               .map((line) => regex.exec(line) && regex.exec(line)[1])
               .filter(a => !!a)
               .map(branchName => branchName.replace(/([\^~](\d*))+/, ''))
-              .map(branchName => branchName.replace('origin/', ''));
+              .map(branchName => branchName.replace('origin/', ''))
+              .filter((branchName, i, arr) => arr.indexOf(branchName) !== i);
 }
 
 function getOriginBranch() {
@@ -49,7 +50,7 @@ function getOriginBranch() {
                       allBranches = allBranches
                           .filter(branchName => allPushedBranches.indexOf(branchName) > -1)
                           .filter((el, i, arr) => arr[i + 1] !== el);
-                    console.log(allBranches, allPushedBranches)
+                      console.log(allBranches, allPushedBranches)
                       return Promise
                           .all(allBranches.map((branchName) => revParse(branchName)))
                   })
@@ -121,4 +122,4 @@ function getOriginBranch() {
 
 module.exports = getOriginBranch;
 
-getOriginBranch().then(t=>console.log(t))
+getOriginBranch().then(t => console.log(t))
