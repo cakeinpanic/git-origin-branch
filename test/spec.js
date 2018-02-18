@@ -63,15 +63,13 @@ function removeBranch(branchName) {
 }
 
 function clear() {
-    checkout(startBranch)
-
+    checkoutBranch(startBranch)
     removeBranch(ONE_STEP);
     removeBranch(SECOND_STEP);
     removeBranch(THIRD_STEP);
     removeBranch(FOURTH_STEP);
     deleteRemote(THIRD_STEP);
     unstash();
-
 }
 
 function addAndCommitFile(name) {
@@ -81,7 +79,7 @@ function addAndCommitFile(name) {
 fdescribe('ff', () => {
     beforeAll(() => prepareBranches());
 
-    afterAll(() => clear());
+    // afterAll(() => clear());
 
     it('current level', (done) => {
         git.checkout(startBranch)
@@ -92,7 +90,7 @@ fdescribe('ff', () => {
            .then(done);
     });
 
-    it('first level', (done) => {
+    fit('first level', (done) => {
         git.checkout(ONE_STEP)
            .then(() => getOriginBranch())
            .then(data => {
@@ -113,7 +111,7 @@ fdescribe('ff', () => {
 
     describe('pushed', () => {
 
-        fit('pushed level', (done) => {
+        it('pushed level', (done) => {
             git.checkout(THIRD_STEP)
                .then(() => getOriginBranch())
                .then(data => {

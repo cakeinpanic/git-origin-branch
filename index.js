@@ -33,6 +33,7 @@ function getAllPushedBranchesList() {
 }
 
 function getAllMatches(str) {
+    console.log(str);
     let regex = /\[(.+)\]/;
 
     return str.split('\n')
@@ -45,13 +46,13 @@ function getAllMatches(str) {
 }
 
 function getOriginBranch() {
-    return Promise.all([getAllBranchesList(), getAllPushedBranchesList()])
-                  .then(([allBranches, allPushedBranches]) => {
-                      console.log(allBranches)
+    return Promise.all([getAllBranchesList()])
+                  .then(([allBranches]) => {
+                     console.log(allBranches)
                       // allBranches = allBranches
                       //     .filter(branchName => allPushedBranches.indexOf(branchName) > -1)
                       //     .filter((el, i, arr) => arr[i + 1] !== el);
-                      console.log(allBranches, allPushedBranches)
+                      //console.log(allBranches, allPushedBranches)
                       return Promise
                           .all(allBranches.map((branchName) => revParse(branchName)))
                   })
@@ -126,4 +127,4 @@ function getOriginBranch() {
 
 module.exports = getOriginBranch;
 
-getOriginBranch().then(t => console.log(t));//.catch(t=>console.log(t))
+// getOriginBranch().then(t => console.log(t));//.catch(t=>console.log(t))
