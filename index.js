@@ -41,7 +41,7 @@ function getAllMatches(str) {
               .filter(a => !!a)
               .map(branchName => branchName.replace(/([\^~](\d*))+/, ''))
               .map(branchName => branchName.replace('origin/', ''))
-              .filter((branchName, i, arr) => arr.indexOf(branchName) !== i);
+              .filter((branchName, i, arr) => arr.indexOf(branchName) === i);
 }
 
 function getOriginBranch() {
