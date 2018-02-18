@@ -16,7 +16,7 @@ function revParse(branchName) {
 
 function getAllBranchesList() {
     return new Promise((resolve) => {
-        exec('git show-branch --topo-order',
+        exec('git show-branch --topo-order | grep \'\\*\'',
             (error, output) => {
                 resolve(getAllMatches(output))
             });
