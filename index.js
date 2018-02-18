@@ -25,9 +25,9 @@ function getAllBranchesList() {
 
 function getAllPushedBranchesList() {
     return new Promise((resolve) => {
-        exec('git show-branch -r ',
+        exec('git show-branch -r --topo-order  | grep \'\\!\'',
             (error, output) => {
-                resolve(getAllMatches(output))
+                resolve(getAllMatches(output).reverse())
             });
     })
 }
