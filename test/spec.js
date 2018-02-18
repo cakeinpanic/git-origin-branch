@@ -63,17 +63,13 @@ function removeBranch(branchName) {
 }
 
 function clear() {
-    git.checkout(startBranch)
-       .then(() => {
-           removeBranch(ONE_STEP);
-           removeBranch(SECOND_STEP);
-           removeBranch(THIRD_STEP);
-           removeBranch(FOURTH_STEP);
-           deleteRemote(THIRD_STEP);
-           unstash();
-       })
-       .catch((err) => console.log(err))
-
+    checkoutBranch(startBranch)
+    removeBranch(ONE_STEP);
+    removeBranch(SECOND_STEP);
+    removeBranch(THIRD_STEP);
+    removeBranch(FOURTH_STEP);
+    deleteRemote(THIRD_STEP);
+    unstash();
 }
 
 function addAndCommitFile(name) {
@@ -83,7 +79,7 @@ function addAndCommitFile(name) {
 fdescribe('ff', () => {
     beforeAll(() => prepareBranches());
 
-    afterAll(() => clear());
+    // afterAll(() => clear());
 
     it('current level', (done) => {
         git.checkout(startBranch)
@@ -113,22 +109,25 @@ fdescribe('ff', () => {
            .then(done);
     });
 
-    it('pushed level', (done) => {
-        git.checkout(THIRD_STEP)
-           .then(() => getOriginBranch())
-           .then(data => {
-               expect(data).toEqual(`origin/${THIRD_STEP}`)
-           })
-           .then(done);
-    });
+    describe('pushed', () => {
 
-    it('second pushed level', (done) => {
-        git.checkout(FOURTH_STEP)
-           .then(() => getOriginBranch())
-           .then(data => {
-               expect(data).toEqual(`origin/${THIRD_STEP}`)
-           })
-           .then(done);
+        it('pushed level', (done) => {
+            git.checkout(THIRD_STEP)
+               .then(() => getOriginBranch())
+               .then(data => {
+                   expect(data).toEqual(`origin/${THIRD_STEP}`)
+               })
+               .then(done);
+        });
+
+        it('second pushed level', (done) => {
+            git.checkout(FOURTH_STEP)
+               .then(() => getOriginBranch())
+               .then(data => {
+                   expect(data).toEqual(`origin/${THIRD_STEP}`)
+               })
+               .then(done);
+        });
     });
 });
 
