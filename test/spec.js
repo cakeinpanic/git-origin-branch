@@ -113,22 +113,25 @@ fdescribe('ff', () => {
            .then(done);
     });
 
-    it('pushed level', (done) => {
-        git.checkout(THIRD_STEP)
-           .then(() => getOriginBranch())
-           .then(data => {
-               expect(data).toEqual(`origin/${THIRD_STEP}`)
-           })
-           .then(done);
-    });
+    fdescribe('pushed', () => {
 
-    it('second pushed level', (done) => {
-        git.checkout(FOURTH_STEP)
-           .then(() => getOriginBranch())
-           .then(data => {
-               expect(data).toEqual(`origin/${THIRD_STEP}`)
-           })
-           .then(done);
+        it('pushed level', (done) => {
+            git.checkout(THIRD_STEP)
+               .then(() => getOriginBranch())
+               .then(data => {
+                   expect(data).toEqual(`origin/${THIRD_STEP}`)
+               })
+               .then(done);
+        });
+
+        it('second pushed level', (done) => {
+            git.checkout(FOURTH_STEP)
+               .then(() => getOriginBranch())
+               .then(data => {
+                   expect(data).toEqual(`origin/${THIRD_STEP}`)
+               })
+               .then(done);
+        });
     });
 });
 
