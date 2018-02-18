@@ -63,16 +63,14 @@ function removeBranch(branchName) {
 }
 
 function clear() {
-    git.checkout(startBranch)
-       .then(() => {
-           removeBranch(ONE_STEP);
-           removeBranch(SECOND_STEP);
-           removeBranch(THIRD_STEP);
-           removeBranch(FOURTH_STEP);
-           deleteRemote(THIRD_STEP);
-           unstash();
-       })
-       .catch((err) => console.log(err))
+    checkout(startBranch)
+
+    removeBranch(ONE_STEP);
+    removeBranch(SECOND_STEP);
+    removeBranch(THIRD_STEP);
+    removeBranch(FOURTH_STEP);
+    deleteRemote(THIRD_STEP);
+    unstash();
 
 }
 
@@ -94,7 +92,7 @@ fdescribe('ff', () => {
            .then(done);
     });
 
-    fit('first level', (done) => {
+    it('first level', (done) => {
         git.checkout(ONE_STEP)
            .then(() => getOriginBranch())
            .then(data => {
@@ -113,9 +111,9 @@ fdescribe('ff', () => {
            .then(done);
     });
 
-    fdescribe('pushed', () => {
+    describe('pushed', () => {
 
-        it('pushed level', (done) => {
+        fit('pushed level', (done) => {
             git.checkout(THIRD_STEP)
                .then(() => getOriginBranch())
                .then(data => {
