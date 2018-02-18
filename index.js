@@ -63,7 +63,8 @@ function getOriginBranch() {
                   })
                   .then(branchName => {
                       if (!branchName) {
-                          throw Error('no origin at all, have never been pushed');
+                          //throw Error('no origin at all, have never been pushed');
+                          return null;
                       }
                       return `origin/${branchName.trim()}`
                   })
