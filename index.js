@@ -47,7 +47,7 @@ function getAllMatches(str) {
 function getOriginBranch() {
     return Promise.all([getAllBranchesList(), getAllPushedBranchesList()])
                   .then(([allBranches, allPushedBranches]) => {
-                        console.log(allBranches)
+                      console.log(allBranches)
                       // allBranches = allBranches
                       //     .filter(branchName => allPushedBranches.indexOf(branchName) > -1)
                       //     .filter((el, i, arr) => arr[i + 1] !== el);
@@ -56,8 +56,10 @@ function getOriginBranch() {
                           .all(allBranches.map((branchName) => revParse(branchName)))
                   })
                   .then(data => {
-                      console.log(data);
-                      return data.find((branch) => branch.status).branchName
+                      const pushed = data.find((branch) => branch.status);
+                      console.log(pushed);
+                      if (pushed)
+                          return pushed ? pushed.branchName : null;
                   })
                   .then(branchName => {
                       if (!branchName) {
@@ -123,4 +125,4 @@ function getOriginBranch() {
 
 module.exports = getOriginBranch;
 
-getOriginBranch().then(t => console.log(t))
+getOriginBranch().then(t => console.log(t));//.catch(t=>console.log(t))
